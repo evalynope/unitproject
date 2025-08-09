@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
-
-# trying to push
+from typing import NoReturn
+import os
 
 @dataclass
 class Attendee():
@@ -14,6 +14,34 @@ class Event():
     date: datetime
     time: datetime
     place: str
+
+def get_username_password() -> NoReturn:
+    while True:
+        username = input("Username: > ").strip()
+        file_path = f"{username}.txt"
+        if os.path.exists(file_path):
+            print("That username already exists.")
+        else:
+            with open(f"{username}.txt", "w") as new_user:
+                password = input("Password: > ").strip()
+                new_user.write(password)
+                new_user.close
+                break
+
+def login_with_username_password() -> bool:
+    while True:
+        username = input("Username: > ").strip()
+        try:
+            while True:
+                with open(f"{username}.txt", "r") as checker:
+                    stored_password = checker.readline().strip()
+                    password = input("Password: > ").strip()
+                    if password == stored_password:
+                        return True
+                    else:
+                        print("Invalid login credentials.")
+        except FileNotFoundError:
+            print("Invalid login credentials.")
 
 def read_events():
     pass
