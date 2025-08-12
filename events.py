@@ -80,12 +80,9 @@ def view_all_events(directory = EVENTS_DIR) -> list: #action [2]
     if not os.path.exists(directory):
         print("No events folder found.")
         return
-    
     files = [f for f in os.listdir(directory) if f.endswith(".txt")]
-
     if not files:
         print("No events found.")
-    
     if files:
         for file in files:
             print(f"\n--- {file} ---\n") #not sure I love how this looks...to revisit later
@@ -117,27 +114,20 @@ def main():
             get_username_password()
         else: print("Not a valid choice. Please enter '1' to login or '2' to create a new username and password.")
         break
-
     while True: 
         print("[1] Create an event \n[2] View all events \n[3] Register for an event \n[4] See events you’re registered for  \n[5] Cancel registration or event \n[6] Quit")
-
         action = input("> ")
         if action.strip() == '1':
             event = create_event_from_input()
-
             with open(os.path.join(EVENTS_DIR, f"{event.name}.txt"), "w") as file:
             # (f"{event.name}.txt", "w") as file: ## This was what I used before I created an events folder. 
                 file.write(f"{event.name} \n{event.date} \n{event.time} \n{event.place}")
-                print(f"Event saved as {event.name}.txt in the events folder.")
-
-        
+                print(f"Event saved as {event.name}.txt in the events folder.") 
         elif action.strip() == '2': #VIEW EVENTS
             print("Viewing all events")
-            view_all_events()
-            
+            view_all_events()    
         elif action.strip() == '3':
             register_attendee()
-
           # where 3-5 will go         
         elif action.strip() == '6':
             print("Goodbye!")
@@ -146,21 +136,7 @@ def main():
             print("Invalid entry. Please select from the following:^^ ")
 
 
-        
-
-
-
-
-
-
-
-
     
-
-
-
-
-
 
 if __name__ == '__main__':
     main()
