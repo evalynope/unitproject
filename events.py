@@ -53,31 +53,35 @@ def login_with_username_password() -> bool: #RUSS #Lets you login and will deny 
             print("Invalid login credentials.")
 
 
-def create_event_from_input() -> None: #action [1]
+def create_event_from_input() -> NoReturn: #action [1]
     event_dates = []
-    name  = input("Event name: ") 
+    date_format = "%m/%d/%Y"
+    time_format = "%H:%S"
+    name  = input("Event name: > ") 
     while True: 
-        date = input("Enter the date (Month, day) ")
-        while date in event_dates:
+        date = input("Enter the date (MM/DD/YYYY). > ")
+        if date in event_dates:
             print("An event already exists on that date. Please choose another.")
-            date = input("Enter the date (Month, day) ")
-        try:
-            valid_date = datetime.strptime(date, "%B %d")
-            break
-        except ValueError: 
-            if not valid_date:
+        else:
+            try:
+                datetime.strptime(date, date_format)
+                event_dates.append(date)
+                date = Event.date # Russ
+                break
+            except ValueError: 
                 print("Invalid Date Format. Please use full month name and numerical day of the month")
-        date = Event.date # Russ
     while True:
-        time = input("Event time: ")
+        time = input("Event time (HH:MM) > ")
         try: 
-            valid_time =  datetime.strptime(time, "%I:%M %p")
+            datetime.strptime(time, time_format)
+            time = Event.time # Russ
             break
         except ValueError:
-            if not valid_time: 
-                print("Invalid time format. Please enter the hour, minute, and am or pm. (07:00 PM)")    
-    place = input("Place: ")   
-    event_dates.append(date) # this  is a collection that can be looped through later for input validation    
+            print("Invalid time format. Please enter the hour, minute, and am or pm. (07:00 PM)")    
+    while True:
+        place = input("Place: > ")
+        place = Event.place
+        break
     return Event(name, date, time, place)
     
 
@@ -153,21 +157,6 @@ def main():
 
         else:
             print("Invalid entry.")
-
-
-        
-
-
-
-
-
-
-
-
-    
-
-
-
 
 
 
