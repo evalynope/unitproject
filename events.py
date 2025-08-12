@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import NoReturn
-import os 
+import os
 
 @dataclass
 class Attendee():
