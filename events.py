@@ -9,11 +9,15 @@ class Attendee():
     phone: int
     event: str
 
+@dataclass
 class Event():
     name: str
     date: datetime
     time: datetime
     place: str
+
+EVENTS_DIR = "events"
+os.makedirs(EVENTS_DIR, exist_ok=True)
 
 attendees = [] # list of 'Attendee' instances
 events = [] # list of 'Event' instances
@@ -33,8 +37,7 @@ def get_username_password() -> NoReturn:
                 new_user.close
                 break
 
-
-def login_with_username_password() -> bool:
+def login_with_username_password() -> bool: #RUSS #Lets you login and will deny your credentials if pw is incorrect.
     while True:
         username = input("Username: > ").strip()
         try:
@@ -49,43 +52,61 @@ def login_with_username_password() -> bool:
         except FileNotFoundError:
             print("Invalid login credentials.")
 
-def read_events():
-    pass
 
-def create_event_from_input(): #action [1]
-    name  = input("Event name: ")
-    name = Event.name # Russ
+def create_event_from_input() -> None: #action [1]
+    event_dates = []
+    name  = input("Event name: ") 
     while True: 
         date = input("Enter the date (Month, day) ")
+        while date in event_dates:
+            print("An event already exists on that date. Please choose another.")
+            date = input("Enter the date (Month, day) ")
         try:
             valid_date = datetime.strptime(date, "%B %d")
             break
         except ValueError: 
-            print("Invalid Date Format. Please use full month name and numerical day of the month")
+            if not valid_date:
+                print("Invalid Date Format. Please use full month name and numerical day of the month")
         date = Event.date # Russ
     while True:
-        time = input("Enter event time as ")
+        time = input("Event time: ")
         try: 
             valid_time =  datetime.strptime(time, "%I:%M %p")
             break
-        except ValueError: 
-            print("Invalid time format. Please enter the hour, minute, and am or pm. (07:00 PM)")
-        time = Event.time # Russ
-    place = input("Place: ")
-    place = Event.place # Russ
-#     return Event(name, date, time, place)
-    name = Event(name, date, time, place)
-    events.append(name)
-
-
-##with open(f"{event.name}.txt", "w") as file:
-##    file.write(f"{event.name} \n{event.date} \n{event.time} \n{event.place}")
-##    print(f"Event saved as {event.name}.txt")
+        except ValueError:
+            if not valid_time: 
+                print("Invalid time format. Please enter the hour, minute, and am or pm. (07:00 PM)")    
+    place = input("Place: ")   
+    event_dates.append(date) # this  is a collection that can be looped through later for input validation    
+    return Event(name, date, time, place)
     
 
 
-def view_events(): #action [2]
-    pass
+def view_all_events(directory = EVENTS_DIR) -> list: #action [2] 
+    if not os.path.exists(directory):
+        print("No events folder found.")
+        return
+    
+    files = [f for f in os.listdir(directory) if f.endswith(".txt")]
+
+    if not files:
+        print("No events found.")
+    
+    if files:
+        for file in files:
+            print(f"\n--- {file} ---\n") #not sure I love how this looks...to revisit later
+            with open(os.path.join(directory, file), "r") as f:
+                print(f.read())
+                print("\n--------------")
+                
+def register_attendee(): 
+    name = input("Name of attendee: ")
+    phone = input("Phone number: ")
+    event = input("Event to register for: ")
+
+    return Attendee(name, phone, event)
+
+
 
 def update(): #action [3]
     pass
@@ -104,7 +125,7 @@ def main():
             if unlock == True:
                 ### meat of the program goes here ###
 
-            
+    
                 # while True: 
                 #     login_create_input = input("Welcome to Event Registration! [L]ogin or [C]reate a username and password below.")
                 #     if login_create_input.strip().lower() == "l":
@@ -119,7 +140,7 @@ def main():
                     action = input("> ")
                     if action.strip() == '1':
                         create_event_from_input()
-#                        save_event_in_txt_file(event)
+                        save_event_in_txt_file(event)
                     # elif action.strip() == '2':
                     #     pass
                     # elif action.strip() == '3':
