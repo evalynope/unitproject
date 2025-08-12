@@ -49,23 +49,31 @@ def login_with_username_password() -> bool: #RUSS #Lets you login and will deny 
 
 
 def create_event_from_input() -> None: #action [1]
+    event_dates = []
     name  = input("Event name: ") 
     while True: 
         date = input("Enter the date (Month, day) ")
+        while date in event_dates:
+            print("An event already exists on that date. Please choose another.")
+            date = input("Enter the date (Month, day) ")
         try:
             valid_date = datetime.strptime(date, "%B %d")
             break
         except ValueError: 
-            print("Invalid Date Format. Please use full month name and numerical day of the month")
+            if not valid_date:
+                print("Invalid Date Format. Please use full month name and numerical day of the month")
     while True:
         time = input("Event time: ")
         try: 
             valid_time =  datetime.strptime(time, "%I:%M %p")
             break
-        except ValueError: 
-            print("Invalid time format. Please enter the hour, minute, and am or pm. (07:00 PM)")    
-    place = input("Place: ")       
+        except ValueError:
+            if not valid_time: 
+                print("Invalid time format. Please enter the hour, minute, and am or pm. (07:00 PM)")    
+    place = input("Place: ")   
+    event_dates.append(date) # this  is a collection that can be looped through later for input validation    
     return Event(name, date, time, place)
+    
 
 
 def view_all_events(directory = EVENTS_DIR) -> list: #action [2] 
@@ -83,7 +91,15 @@ def view_all_events(directory = EVENTS_DIR) -> list: #action [2]
             print(f"\n--- {file} ---\n") #not sure I love how this looks...to revisit later
             with open(os.path.join(directory, file), "r") as f:
                 print(f.read())
+                print("\n--------------")
                 
+def register_attendee(): 
+    name = input("Name of attendee: ")
+    phone = input("Phone number: ")
+    event = input("Event to register for: ")
+
+    return Attendee(name, phone, event)
+
 
 
 def update(): #action [3]
@@ -118,7 +134,11 @@ def main():
         elif action.strip() == '2': #VIEW EVENTS
             print("Viewing all events")
             view_all_events()
-            # where 3-5 will go         
+            
+        elif action.strip() == '3':
+            register_attendee()
+
+          # where 3-5 will go         
         elif action.strip() == '6':
             print("Goodbye!")
             break
