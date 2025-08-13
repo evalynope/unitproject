@@ -90,12 +90,9 @@ def view_all_events(directory = EVENTS_DIR) -> list: #action [2]
     if not os.path.exists(directory):
         print("No events folder found.")
         return
-    
     files = [f for f in os.listdir(directory) if f.endswith(".txt")]
-
     if not files:
         print("No events found.")
-    
     if files:
         for file in files:
             print(f"\n--- {file} ---\n") #not sure I love how this looks...to revisit later
@@ -117,6 +114,33 @@ def update(): #action [3]
 
 def main():
 
+    
+    while True: 
+        print("Welcome to Event Registration! \n[1] Login \n[2]Create a username and password.")
+        login_input = input("> ")
+        if login_input.strip() == "1":
+            login_with_username_password() 
+        elif login_input.strip() == "2":
+            get_username_password()
+        else: print("Not a valid choice. Please enter '1' to login or '2' to create a new username and password.")
+        break
+    while True: 
+        print("[1] Create an event \n[2] View all events \n[3] Register for an event \n[4] See events you’re registered for  \n[5] Cancel registration or event \n[6] Quit")
+        action = input("> ")
+        if action.strip() == '1':
+            event = create_event_from_input()
+            with open(os.path.join(EVENTS_DIR, f"{event.name}.txt"), "w") as file:
+            # (f"{event.name}.txt", "w") as file: ## This was what I used before I created an events folder. 
+                file.write(f"{event.name} \n{event.date} \n{event.time} \n{event.place}")
+                print(f"Event saved as {event.name}.txt in the events folder.") 
+        elif action.strip() == '2': #VIEW EVENTS
+            print("Viewing all events")
+            view_all_events()    
+        elif action.strip() == '3':
+            register_attendee()
+          # where 3-5 will go         
+        elif action.strip() == '6':
+            print("Goodbye!")
     print("Welcome to our event registration page!")
     while True:
         action = input("1 - New user\n2 - Login\n3 - Exit\n> ").strip()
@@ -157,6 +181,21 @@ def main():
 
         else:
             print("Invalid entry.")
+
+
+        
+
+
+
+
+
+
+
+
+    
+
+
+
 
 
 
