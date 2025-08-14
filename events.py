@@ -92,23 +92,6 @@ def create_event() -> Event:
                     break
         break
 
-def view_event():
-    search_name = input("Search by event name: > ")
-    file_path = f"{search_name}.txt"
-    try:
-        with open(f"{file_path}.txt", "r") as file:
-            lines = file.readlines()
-            date, time, location = [line.strip() for line in lines]
-            print("-------------------")
-            print(f"{search_name}")
-            print(f"{date}")
-            print(f"{time}")
-            print(f"{location}")
-            print("-------------------")
-    except FileNotFoundError:
-        print("Not found.")
-#### Russ create event and view above
-
 
 ###Evalyn get_all_events, register_attendee and see__events 
 
@@ -190,7 +173,7 @@ def main():
                             print(f"Event saved as {event.name}.txt in the events folder.") 
                     elif action.strip() == '2': 
                         print("Viewing all events")
-                        view_all_events()    
+                        get_all_events()    
                     elif action.strip() == '3':
                         register_attendee()
                     elif action.strip() == '4':
