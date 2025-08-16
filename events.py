@@ -1,3 +1,4 @@
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import NoReturn
@@ -26,7 +27,7 @@ class Event:
     def __str__(self):
         return f"Event: {self.name}\nDate: {self.date}\nTime: {self.time}\nVenue: {self.place}"
 
-EVENTS_DIR = "events" 
+EVENTS_DIR = "events" #folder
 os.makedirs(EVENTS_DIR, exist_ok=True)
 
 ATTENDEES_DIR = "attendees" 
@@ -67,7 +68,6 @@ def login_with_username_password() -> bool: #RUSS
             print("Invalid login credentials.")
 
 #### Russ create and view event below ####
-
 def create_event(existing_datetimes: list[datetime] = None) -> Event:
     date_format = "%m/%d/%Y"
     time_format = "%H:%M"
@@ -114,45 +114,23 @@ def create_event(existing_datetimes: list[datetime] = None) -> Event:
                         print(existing_datetimes)
                         return event 
         event_name = input("Event name: > ").strip()
+           
 
-# def create_event() -> Event:
-#     date_format = "%m/%d/%Y"
-#     time_format = "%H:%M"
-#     event_name = input("Event name: > ")
-#     event_date_time_list = []
-#     events = []
-#     while True:
-#         file_path = f"{event_name}.txt"
-#         if os.path.exists(file_path):
-#             print("That event name has already been taken.")
-#         else:
-#             while True:
-#                 event_date = input("Date (MM/DD/YYYY): > ")
-#                 datetime.strptime(event_date, date_format)
-#                 event_time = input("Time (HH:MM): > ")
-#                 datetime.strptime(event_time, time_format)
-#                 for combined_datetime in event_date_time_list:
-#                     combined_datetime = datetime.combine(event_date, event_time)
-#                     if combined_datetime in event_date_time_list:
-#                         print(f"{event_time} on {event_date} is already taken.\nPlease choose another date and time.")
-#                     else:
-#                         event_date_time_list.append(combined_datetime)
-#                 event_venue = input("Venue: > ")
-#                 event = Event(event_name, event_date, event_time, event_venue)
-#                 events.append(event)
-#                 print(events)
-#                 with open(file_path, "w") as file:
-#                     file.write(f"{event_name}\n")
-#                     file.write(f"{event_date}\n")
-#                     file.close
-#                 with open(file_path, "a") as file:
-#                     file.write(f"{event_time}\n")
-#                     file.write(f"{event_venue}\n")
-#                     print("Event saved successfully.")
-#                     return event 
-#                 break
-#         break
-
+def view_event():
+    search_name = input("Search by event name: > ")
+    file_path = f"{search_name}.txt"
+    try:
+        with open(f"{file_path}.txt", "r") as file:
+            lines = file.readlines()
+            date, time, location = [line.strip() for line in lines]
+            print("-------------------")
+            print(f"{search_name}")
+            print(f"{date}")
+            print(f"{time}")
+            print(f"{location}")
+            print("-------------------")
+    except FileNotFoundError:
+        print("Not found.")
 #### Russ create event and view above
 
 def view_all_events(directory = EVENTS_DIR) -> None: 
@@ -170,7 +148,39 @@ def view_all_events(directory = EVENTS_DIR) -> None:
                 print("\n--------------")
 
 
-###Evalyn get_all_events, register_attendee and see__events 
+
+def view_all_events(directory = EVENTS_DIR) -> None: 
+    if not os.path.exists(directory):
+        print("No events folder found.")
+        return
+    files = [f for f in os.listdir(directory) if f.endswith(".txt")]
+    if not files:
+        print("No events found.")
+    if files:
+        for file in files:
+            print(f"\n--- {file} ---\n") 
+            with open(os.path.join(directory, file), "r") as f:
+                print(f.read())
+                print("\n--------------")
+
+
+
+def view_all_events(directory = EVENTS_DIR) -> None: 
+    if not os.path.exists(directory):
+        print("No events folder found.")
+        return
+    files = [f for f in os.listdir(directory) if f.endswith(".txt")]
+    if not files:
+        print("No events found.")
+    if files:
+        for file in files:
+            print(f"\n--- {file} ---\n") 
+            with open(os.path.join(directory, file), "r") as f:
+                print(f.read())
+                print("\n--------------")
+
+
+ 
 
 def get_all_events() -> list[Event]:
     events = []
@@ -255,12 +265,94 @@ def see_events_registered_for() -> None:
     else:
         print(f"No events found for {name_search.title()}.")
 
+def update_event():
+    event = input("Enter the name of the event to update: > ")
+    path = f"events/{event}.txt"
+    
+    if not os.path.exists(path):
+        print("Not found.")
+        return
+    with open(path, "r") as file:
+        lines = file.readlines()
+        current_name = lines[0].strip()
+        current_date = lines[1].strip()
+        current_time = lines[2].strip()
+        current_place = lines[3].strip()
+    
+    new_name = input(f"New name (current: {current_name}): > ")
+    if not new_name:
+        new_name = current_name
+    
+    new_date = input(f"New date (current: {current_date}): > ")
+    if not new_date:
+        new_date = current_date
+    
+    new_time = input(f"New time (current: {current_time}): > ")
+    if not new_time:
+        new_time = current_time
+    
+    new_place = input(f"New place (current: {current_place}): > ")
+    if not new_place:
+        new_place = current_place
+    
+    if new_name != current_name:
+        new_path = f"events/{new_name}.txt"
+        with open(new_path, "w") as file:
+            file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
+       
+    else:
+        with open(path, "w") as file:
+            file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
+import os
+
+def delete_event():
+    current_name = input("Enter the name of the event to delete : > ")
+    "events/<class '__main__.Event'>.txt"
+    path = f"events/{current_name}.txt"
+    
+    if not os.path.exists(path):
+        print("Not found.")
+        return
+    with open(path, "r") as file:
+        lines = file.readlines()
+    current_name = lines[0].strip()
+    current_date = lines[1].strip()
+    current_time = lines[2].strip()
+    current_place = lines[3].strip()
+
+    new_name = input(f"New name (current: {current_name}): > ")
+    if not new_name:
+        new_name = current_name
+    
+    new_date = input(f"New date (current: {current_date}): > ")
+    if not new_date:
+        new_date = current_date
+    
+    new_time = input(f"New time (current: {current_time}): > ")
+    if not new_time:
+        new_time = current_time
+    
+    new_place = input(f"New place (current: {current_place}): > ")
+    if not new_place:
+        new_place = current_place
+    
+    if new_name != current_name:
+        new_path = f"events/{new_name}.txt"
+        with open(new_path, "w") as file:
+            file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
+       
+    else:
+        with open(path, "w") as file:
+            file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
+    
+   
 
 def main():
 
     print("Welcome to our event registration page!")
+    existing_datetimes = []
     while True:
-        action = input("1 - New user\n2 - Login\n3 - Exit\n> ").strip()
+        action = input("[1] New user\n[2] Login\n[3] Exit\n> ").strip()
         if action == "3":
             break
         elif action == "1":
@@ -269,22 +361,25 @@ def main():
             unlock = login_with_username_password()
             if unlock == True:
                 while True: 
-                    print("[1] Create an event \n[2] View all events \n[3] Register for an event \n[4] See events you’re registered for  \n[5] Quit")
+                    print("[1] Create an event \n[2] View all events \n[3] Register for an event \n[4] See events you’re registered for  \n[5] Update event's information \n[6] Delete an event \n[7] Log Out")
                     action = input("> ")
                     if action.strip() == '1':
-                        event = create_event()
-                        filepath = os.path.join(EVENTS_DIR, f"{event.name}.txt")
-                        with open(filepath, "w") as file:
+                        event = create_event(existing_datetimes)
+                        with open(os.path.join(EVENTS_DIR, f"{event.name}.txt"), "w") as file:
                             file.write(f"{event.name} \n{event.date} \n{event.time} \n{event.place}")
                             print(f"Event saved as {event.name}.txt in the events folder.") 
                     elif action.strip() == '2': 
                         print("Viewing all events")
-                        view_all_events()    
+                        view_all_events()
                     elif action.strip() == '3':
                         register_attendee()
                     elif action.strip() == '4':
-                        see_events_registered_for()      
+                        see_events_registered_for() 
                     elif action.strip() == '5':
+                        update_event()
+                    elif action.strip() == '6':
+                        delete_event()             
+                    elif action.strip() == '7':
                         print("Goodbye!")
                         break
         else:
@@ -292,3 +387,12 @@ def main():
    
 if __name__ == '__main__':
     main()
+      
+
+
+
+        
+
+
+
+
