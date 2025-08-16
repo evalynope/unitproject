@@ -16,6 +16,16 @@ class Event():
     time: datetime
     place: str
 
+class Event:
+    def __init__(self, name, date, time, place):
+        self.name = name
+        self.date = date
+        self.time = time
+        self.place = place
+
+    def __str__(self):
+        return f"Event: {self.name}\nDate: {self.date}\nTime: {self.time}\nVenue: {self.place}"
+
 EVENTS_DIR = "events" #folder
 os.makedirs(EVENTS_DIR, exist_ok=True)
 
@@ -57,40 +67,84 @@ def login_with_username_password() -> bool: #RUSS
             print("Invalid login credentials.")
 
 #### Russ create and view event below ####
-def create_event() -> Event:
+def create_event(existing_datetimes: list[datetime] = None) -> Event:
     date_format = "%m/%d/%Y"
     time_format = "%H:%M"
-    event_name = input("Event name: > ")
-    event_date_time_list = []
+    event_name = input("Event name: > ").strip()
+
     while True:
         file_path = f"{event_name}.txt"
         if os.path.exists(file_path):
             print("That event name has already been taken.")
         else:
             while True:
-                event_date = input("Date (MM/DD/YYYY): > ")
-                datetime.strptime(event_date, date_format)
-                event_time = input("Time (HH:MM): > ")
-                datetime.strptime(event_time, time_format)
-                for combined_datetime in event_date_time_list:
-                    combined_datetime = datetime.combine(event_date, event_time)
-                    if combined_datetime in event_date_time_list:
-                        print(f"{event_time} on {event_date} is already taken.\nPlease choose another date and time.")
-                    else:
-                        event_date_time_list.append(combined_datetime)
-                event_venue = input("Venue: > ")
-                event = Event(event_name, event_date, event_time, event_venue)
-                print(event)
-                with open(file_path, "w") as file:
-                    file.write(f"{event_date}\n")
-                    file.close
-                with open(file_path, "a") as file:
-                    file.write(f"{event_time}\n")
-                    file.write(f"{event_venue}\n")
-                    print("Event saved successfully.")
-                    return event 
-                    break
-        break
+                event_date = ""
+                event_time = ""
+                while True:
+                    try:
+                        event_date_str = input("Date (MM/DD/YYYY): > ").strip()
+                        event_date = datetime.strptime(event_date_str, date_format).date()
+                        break
+                    except ValueError:
+                        print("Invalid date.")
+                while True:
+                    try:
+                        event_time_str = input("Time (HH:MM): > ").strip()
+                        event_time = datetime.strptime(event_time_str, time_format).time()
+                        break
+                    except ValueError:
+                        print("Invalid time.")
+
+                combined_datetime = datetime.combine(event_date, event_time)
+                print(f"{combined_datetime} - {existing_datetimes}")
+                if combined_datetime in existing_datetimes:
+                    print(f"{event_time_str} on {event_date_str} is already taken.\nPlease choose another date and time.")
+                else:
+            
+                    event_venue = input("Venue: > ").strip()
+                    event = Event(event_name, event_date, event_time, event_venue)
+                    print(event)
+                    with open(file_path, "w") as file:
+                        file.write(f"{event_date}\n")
+                        file.write(f"{event_time}\n")
+                        file.write(f"{event_venue}\n")
+                        print("Event saved successfully.")
+                        existing_datetimes.append(combined_datetime)
+                        print(existing_datetimes)
+                        return event 
+        event_name = input("Event name: > ").strip()
+           
+
+def view_event():
+    search_name = input("Search by event name: > ")
+    file_path = f"{search_name}.txt"
+    try:
+        with open(f"{file_path}.txt", "r") as file:
+            lines = file.readlines()
+            date, time, location = [line.strip() for line in lines]
+            print("-------------------")
+            print(f"{search_name}")
+            print(f"{date}")
+            print(f"{time}")
+            print(f"{location}")
+            print("-------------------")
+    except FileNotFoundError:
+        print("Not found.")
+#### Russ create event and view above
+
+def view_all_events(directory = EVENTS_DIR) -> None: 
+    if not os.path.exists(directory):
+        print("No events folder found.")
+        return
+    files = [f for f in os.listdir(directory) if f.endswith(".txt")]
+    if not files:
+        print("No events found.")
+    if files:
+        for file in files:
+            print(f"\n--- {file} ---\n") 
+            with open(os.path.join(directory, file), "r") as f:
+                print(f.read())
+                print("\n--------------")
 
 
 ###Evalyn get_all_events, register_attendee and see__events 
@@ -115,19 +169,31 @@ def register_attendee():
     print("Available events:")
     for e in events: 
         print(f"- {e.name}")
-    event = input("Event to register for: ").strip().title()
-    name = input("Name: ").strip().title()
-    phone = input("Phone: ").strip().title()
-    attendee = Attendee(name, phone, event)
-    attendees.append(attendee)
-    for a in attendees: 
-        print(f"{a.name} is registered for the {a.event}!")
-    name = Attendee(f"{name}",f"{phone}", f"{event}")
-    filename = os.path.join(ATTENDEES_DIR, f"{attendee.name}.txt")
-    with open(filename, "a") as file:   
-        file.write(f"{attendee.name} | {attendee.phone} | {attendee.event}\n")
-        file.close
-    return attendee
+    ### edits after ###
+    for event in events:
+        event = input("Event to register for: ").strip().title()
+        event = e.name
+        if e.name not in events:
+            print("Event does not exist.")
+        else:
+            name = input("Name: ").strip().title()
+            phone = input("Phone: ").strip().title()
+            if phone.isdigit():
+                if len(phone) != 10 and not phone.isdigit():
+                    print("Invalid phone number.")
+                else:
+                
+                    attendee = Attendee(name, phone, event)
+                    attendees.append(attendee)
+                    for a in attendees: 
+                        print(f"{a.name} is registered for the {a.event}!")
+                    name = Attendee(f"{name}",f"{phone}", f"{event}")
+                    filename = os.path.join(ATTENDEES_DIR, f"{attendee.name}.txt")
+                    with open(filename, "a") as file:   
+                        file.write(f"{attendee.name} | {attendee.phone} | {attendee.event}\n")
+                        file.close
+                    return attendee
+        
 
 def see_events_registered_for():
     name_search = input("Name to search for: ").strip().lower()
@@ -154,6 +220,7 @@ def see_events_registered_for():
 def main():
 
     print("Welcome to our event registration page!")
+    existing_datetimes = []
     while True:
         action = input("1 - New user\n2 - Login\n3 - Exit\n> ").strip()
         if action == "3":
@@ -167,13 +234,13 @@ def main():
                     print("[1] -Create an event \n[2] -View all events \n[3] -Register for an event \n[4] -See events you’re registered for  \n[5] -Cancel registration or event \n[6] -Quit")
                     action = input("> ")
                     if action.strip() == '1':
-                        event = create_event()
+                        event = create_event(existing_datetimes)
                         with open(os.path.join(EVENTS_DIR, f"{event.name}.txt"), "w") as file:
                             file.write(f"{event.name} \n{event.date} \n{event.time} \n{event.place}")
                             print(f"Event saved as {event.name}.txt in the events folder.") 
                     elif action.strip() == '2': 
                         print("Viewing all events")
-                        get_all_events()    
+                        view_all_events()
                     elif action.strip() == '3':
                         register_attendee()
                     elif action.strip() == '4':
