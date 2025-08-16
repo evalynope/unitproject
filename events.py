@@ -30,11 +30,12 @@ class Event:
 EVENTS_DIR = "events" #folder
 os.makedirs(EVENTS_DIR, exist_ok=True)
 
-ATTENDEES_DIR = "attendees" #folder 
+ATTENDEES_DIR = "attendees" 
 os.makedirs(ATTENDEES_DIR, exist_ok=True)
 
 attendees = [] 
-event_dates = [] #may only be necessary inside the function
+event_dates = [] 
+events = []
 
 def get_username_password() -> NoReturn:
     while True:
@@ -146,23 +147,7 @@ def view_all_events(directory = EVENTS_DIR) -> None:
                 print(f.read())
                 print("\n--------------")
 
-#### Russ create event and view above
 
-def view_all_events(directory = EVENTS_DIR) -> None: 
-    if not os.path.exists(directory):
-        print("No events folder found.")
-        return
-    files = [f for f in os.listdir(directory) if f.endswith(".txt")]
-    if not files:
-        print("No events found.")
-    if files:
-        for file in files:
-            print(f"\n--- {file} ---\n") 
-            with open(os.path.join(directory, file), "r") as f:
-                print(f.read())
-                print("\n--------------")
-
-#### Russ create event and view above
 
 def view_all_events(directory = EVENTS_DIR) -> None: 
     if not os.path.exists(directory):
@@ -179,7 +164,23 @@ def view_all_events(directory = EVENTS_DIR) -> None:
                 print("\n--------------")
 
 
-###Evalyn get_all_events, register_attendee and see__events 
+
+def view_all_events(directory = EVENTS_DIR) -> None: 
+    if not os.path.exists(directory):
+        print("No events folder found.")
+        return
+    files = [f for f in os.listdir(directory) if f.endswith(".txt")]
+    if not files:
+        print("No events found.")
+    if files:
+        for file in files:
+            print(f"\n--- {file} ---\n") 
+            with open(os.path.join(directory, file), "r") as f:
+                print(f.read())
+                print("\n--------------")
+
+
+ 
 
 def get_all_events() -> list[Event]:
     events = []
@@ -190,6 +191,19 @@ def get_all_events() -> list[Event]:
                 if len(lines) >= 4:
                     name, date, time, place = lines[:4]
                     events.append(Event(name, date, time, place))
+    return events
+
+ 
+def get_phone():
+    while True:
+        phone = input("10-digit phone number: ")
+        if not phone.isdigit() or len(phone) != 10:
+            print("Invalid number.")
+        else:
+            return phone
+
+               
+def register_attendee() -> Attendee: 
     return events            
                 
     events = get_all_events()
@@ -197,34 +211,41 @@ def get_all_events() -> list[Event]:
         print("No events to register for.")
         return
     print("Available events:")
+
+    lowered_events = []
     for e in events: 
         print(f"- {e.name}")
-    ### edits after ###
-    for event in events:
-        event = input("Event to register for: ").strip().title()
-        event = e.name
-        if e.name not in events:
-            print("Event does not exist.")
-        else:
-            name = input("Name: ").strip().title()
-            phone = input("Phone: ").strip().title()
-            if phone.isdigit():
-                if len(phone) != 10 and not phone.isdigit():
-                    print("Invalid phone number.")
-                else:
-                
-                    attendee = Attendee(name, phone, event)
-                    attendees.append(attendee)
-                    for a in attendees: 
-                        print(f"{a.name} is registered for the {a.event}!")
-                    name = Attendee(f"{name}",f"{phone}", f"{event}")
-                    filename = os.path.join(ATTENDEES_DIR, f"{attendee.name}.txt")
-                    with open(filename, "a") as file:   
-                        file.write(f"{attendee.name} | {attendee.phone} | {attendee.event}\n")
-                        file.close
-                    return attendee
-        
+        lowered_events.append(e.name.lower().strip())
 
+
+    event = input("Event to register for: ").strip().title()
+
+    attendeeToReturn = None
+    for e in events:
+        while attendeeToReturn == None:
+            if e.name.lower().strip() == event.lower().strip():
+                name = input("Name: ").strip().title()
+                phone = get_phone()
+                attendee = Attendee(name, phone, event)
+                attendees.append(attendee)
+                for a in attendees: 
+                    print(f"{a.name} is registered for the {a.event}!")
+                name = Attendee(f"{name}",f"{phone}", f"{event}")
+                filename = os.path.join(ATTENDEES_DIR, f"{attendee.name}.txt")
+                with open(filename, "a") as file:   
+                    file.write(f"{attendee.name} | {attendee.phone} | {attendee.event}\n")
+                    file.close
+                attendeeToReturn = attendee
+                break
+            elif event.lower().strip() in lowered_events:
+                break
+            else:
+                print("event doesn't exist")
+                event = input("Event to register for: ").strip().title()
+
+    return attendeeToReturn
+                       
+            
 def see_events_registered_for() -> None:
     name_search = input("Name to search for: ").strip().lower()
     found_events = []
@@ -294,13 +315,13 @@ def delete_event():
     if not os.path.exists(path):
         print("Not found.")
         return
-        with open(path, "r") as file:
-            lines = file.readlines()
-        current_name = lines[0].strip()
-        current_date = lines[1].strip()
-        current_time = lines[2].strip()
-        current_place = lines[3].strip()
-    
+    with open(path, "r") as file:
+        lines = file.readlines()
+    current_name = lines[0].strip()
+    current_date = lines[1].strip()
+    current_time = lines[2].strip()
+    current_place = lines[3].strip()
+
     new_name = input(f"New name (current: {current_name}): > ")
     if not new_name:
         new_name = current_name
@@ -333,7 +354,7 @@ def main():
     print("Welcome to our event registration page!")
     existing_datetimes = []
     while True:
-        action = input("1 - New user\n2 - Login\n3 - Exit\n> ").strip()
+        action = input("[1] New user\n[2] Login\n[3] Exit\n> ").strip()
         if action == "3":
             break
         elif action == "1":
@@ -342,7 +363,7 @@ def main():
             unlock = login_with_username_password()
             if unlock == True:
                 while True: 
-                    print("[1] Create an event \n[2] View all events \n[3] Register for an event \n[4] See events you're registered for  \n[5] Cancel registration or event \n[6] Update event registered for \n[7] Delete event registered for \n[8] Quit")
+                    print("[1] Create an event \n[2] View all events \n[3] Register for an event \n[4] See events you’re registered for  \n[5] Update event's information \n[6] Delete an event \n[7] Log Out")
                     action = input("> ")
                     if action.strip() == '1':
                         event = create_event(existing_datetimes)
@@ -356,11 +377,11 @@ def main():
                         register_attendee()
                     elif action.strip() == '4':
                         see_events_registered_for() 
-                    elif action.strip() == '6':
+                    elif action.strip() == '5':
                         update_event()
-                    elif action.strip() == '7':
+                    elif action.strip() == '6':
                         delete_event()             
-                    elif action.strip() == '8':
+                    elif action.strip() == '7':
                         print("Goodbye!")
                         break
         else:
