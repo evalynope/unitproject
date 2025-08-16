@@ -27,7 +27,7 @@ class Event:
     def __str__(self):
         return f"Event: {self.name}\nDate: {self.date}\nTime: {self.time}\nVenue: {self.place}"
 
-EVENTS_DIR = "events" #folder
+EVENTS_DIR = "events" 
 os.makedirs(EVENTS_DIR, exist_ok=True)
 
 ATTENDEES_DIR = "attendees" 
@@ -52,7 +52,7 @@ def get_username_password() -> NoReturn:
                 new_user.close
                 break
 
-def login_with_username_password() -> bool: #RUSS 
+def login_with_username_password() -> bool:  
     while True:
         username = input("Username: > ").strip()
         try:
@@ -67,7 +67,7 @@ def login_with_username_password() -> bool: #RUSS
         except FileNotFoundError:
             print("Invalid login credentials.")
 
-#### Russ create and view event below ####
+
 def create_event(existing_datetimes: list[datetime] = None) -> Event:
     date_format = "%m/%d/%Y"
     time_format = "%H:%M"
@@ -97,7 +97,6 @@ def create_event(existing_datetimes: list[datetime] = None) -> Event:
                         print("Invalid time.")
 
                 combined_datetime = datetime.combine(event_date, event_time)
-                print(f"{combined_datetime} - {existing_datetimes}")
                 if combined_datetime in existing_datetimes:
                     print(f"{event_time_str} on {event_date_str} is already taken.\nPlease choose another date and time.")
                 else:
@@ -131,7 +130,7 @@ def view_event():
             print("-------------------")
     except FileNotFoundError:
         print("Not found.")
-#### Russ create event and view above
+
 
 def view_all_events(directory = EVENTS_DIR) -> None: 
     if not os.path.exists(directory):
@@ -265,6 +264,7 @@ def see_events_registered_for() -> None:
     else:
         print(f"No events found for {name_search.title()}.")
 
+
 def update_event():
     while True: 
         event = input("Enter the name of the event to update: > ")
@@ -321,10 +321,8 @@ def delete_event():
             os.remove(path)
             print(f"{current_name} deleted successfully.")
             break
-        
     
    
-
 def main():
 
     print("Welcome to our event registration page!")
