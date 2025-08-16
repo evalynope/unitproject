@@ -190,46 +190,7 @@ def get_all_events() -> list[Event]:
                 if len(lines) >= 4:
                     name, date, time, place = lines[:4]
                     events.append(Event(name, date, time, place))
-    return events
-               
-# def register_attendee() -> Attendee: 
-
-#     events = get_all_events()
-#     if not events: 
-    #     print("No events to register for.")
-    #     return
-    # print("Available events:")
-    # for e in events: 
-    #     print(f"- {e.name}")
-   
-    # while True:
-    #     try:
-    #         event = input("Event to register for: ").strip().title()
-    #         if event in events:
-    #             break
-    #         else:
-    #             print("Event does not exist.")
-    #             event = input("Event to register for: ").strip().title()
-                
-    #     while True:
-    #         name = input("Name: ").strip().title()
-    #         phone = input("10-digit phone number: ").strip()
-    #         if len(phone) != 10 and not phone.isdigit(): 
-    #             print("Invalid phone number.")
-    #         else:
-    #             break
-
-    # attendee = Attendee(name, phone, event)
-    # attendees.append(attendee)
-    # for a in attendees: 
-    #     print(f"{a.name} is registered for the {a.event}!")
-    # name = Attendee(f"{name}",f"{phone}", f"{event}")
-    # filename = os.path.join(ATTENDEES_DIR, f"{attendee.name}.txt")
-    # with open(filename, "a") as file:   
-    #     file.write(f"{attendee.name} | {attendee.phone} | {attendee.event}\n")
-    #     file.close
-    # return attendee
-            
+    return events            
                 
     events = get_all_events()
     if not events: 
