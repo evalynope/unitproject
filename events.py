@@ -266,13 +266,13 @@ def see_events_registered_for() -> None:
         print(f"No events found for {name_search.title()}.")
 
 def update_event():
-    while True: # keeping inside the funct
+    while True: 
         event = input("Enter the name of the event to update: > ")
         path = f"events/{event}.txt"
 
         if not os.path.exists(path):
             print("Not found.")
-            # return
+            
         
         else:
             with open(path, "r") as file:
@@ -299,7 +299,7 @@ def update_event():
                 new_place = current_place
 
             if new_name != current_name:
-                os.remove(path) # trying to delete prev file
+                os.remove(path) 
                 new_path = f"events/{new_name}.txt"
                 with open(new_path, "w") as file:
                     file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
