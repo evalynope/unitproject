@@ -287,7 +287,7 @@ def main():
                             print(f"Event saved as {event.name}.txt in the events folder.") 
                     elif action.strip() == '2': 
                         print("Viewing all events")
-                        view_all_events()    
+                        get_all_events()    
                     elif action.strip() == '3':
                         register_attendee()
                     elif action.strip() == '4':
