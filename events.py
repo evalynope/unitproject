@@ -202,8 +202,8 @@ def get_phone():
         else:
             return phone
 
-               
 def register_attendee() -> Attendee: 
+                
     events = get_all_events()
     if not events: 
         print("No events to register for.")
@@ -266,84 +266,62 @@ def see_events_registered_for() -> None:
         print(f"No events found for {name_search.title()}.")
 
 def update_event():
-    event = input("Enter the name of the event to update: > ")
-    path = f"events/{event}.txt"
-    
-    if not os.path.exists(path):
-        print("Not found.")
-        return
-    with open(path, "r") as file:
-        lines = file.readlines()
-        current_name = lines[0].strip()
-        current_date = lines[1].strip()
-        current_time = lines[2].strip()
-        current_place = lines[3].strip()
-    
-    new_name = input(f"New name (current: {current_name}): > ")
-    if not new_name:
-        new_name = current_name
-    
-    new_date = input(f"New date (current: {current_date}): > ")
-    if not new_date:
-        new_date = current_date
-    
-    new_time = input(f"New time (current: {current_time}): > ")
-    if not new_time:
-        new_time = current_time
-    
-    new_place = input(f"New place (current: {current_place}): > ")
-    if not new_place:
-        new_place = current_place
-    
-    if new_name != current_name:
-        new_path = f"events/{new_name}.txt"
-        with open(new_path, "w") as file:
-            file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
-       
-    else:
-        with open(path, "w") as file:
-            file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
+    while True: # keeping inside the funct
+        event = input("Enter the name of the event to update: > ")
+        path = f"events/{event}.txt"
+
+        if not os.path.exists(path):
+            print("Not found.")
+            # return
+        
+        else:
+            with open(path, "r") as file:
+                lines = file.readlines()
+                current_name = lines[0].strip()
+                current_date = lines[1].strip()
+                current_time = lines[2].strip()
+                current_place = lines[3].strip()
+
+            new_name = input(f"New name (current: {current_name}): > ")
+            if not new_name:
+                new_name = current_name
+
+            new_date = input(f"New date (current: {current_date}): > ")
+            if not new_date:
+                new_date = current_date
+
+            new_time = input(f"New time (current: {current_time}): > ")
+            if not new_time:
+                new_time = current_time
+
+            new_place = input(f"New place (current: {current_place}): > ")
+            if not new_place:
+                new_place = current_place
+
+            if new_name != current_name:
+                os.remove(path) # trying to delete prev file
+                new_path = f"events/{new_name}.txt"
+                with open(new_path, "w") as file:
+                    file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
+
+            else:
+                with open(path, "w") as file:
+                    file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
+            break
 import os
 
 def delete_event():
     current_name = input("Enter the name of the event to delete : > ")
     "events/<class '__main__.Event'>.txt"
     path = f"events/{current_name}.txt"
-    
-    if not os.path.exists(path):
-        print("Not found.")
-        return
-    with open(path, "r") as file:
-        lines = file.readlines()
-    current_name = lines[0].strip()
-    current_date = lines[1].strip()
-    current_time = lines[2].strip()
-    current_place = lines[3].strip()
-
-    new_name = input(f"New name (current: {current_name}): > ")
-    if not new_name:
-        new_name = current_name
-    
-    new_date = input(f"New date (current: {current_date}): > ")
-    if not new_date:
-        new_date = current_date
-    
-    new_time = input(f"New time (current: {current_time}): > ")
-    if not new_time:
-        new_time = current_time
-    
-    new_place = input(f"New place (current: {current_place}): > ")
-    if not new_place:
-        new_place = current_place
-    
-    if new_name != current_name:
-        new_path = f"events/{new_name}.txt"
-        with open(new_path, "w") as file:
-            file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
-       
-    else:
-        with open(path, "w") as file:
-            file.write(f"{new_name}\n{new_date}\n{new_time}\n{new_place}")
+    while True: 
+        if not os.path.exists(path):
+            print("Not found.")
+        else:
+            os.remove(path)
+            print(f"{current_name} deleted successfully.")
+            break
+        
     
    
 
